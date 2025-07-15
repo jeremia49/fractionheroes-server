@@ -22,10 +22,6 @@ services:
         source: ./storage
         target: /var/www/html/storage
 
-      - type: bind
-        source: ./public/storage
-        target: /var/www/html/public/storage
-        
       - type: volume
         source: vendor_data
         target: /var/www/html/vendor
