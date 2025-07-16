@@ -198,27 +198,26 @@ Content-Type: application/json
 **Request Body:**
 ```json
 {
-    "session_id": "GAME_20250707_001",
-    "final_score": 850,
-    "total_rounds": 10,
-    "game_status": "completed"
+    "game_session_id": 1,
+    "final_score": 850
 }
 ```
+
+**Note:** The `game_status` parameter is now optional. If not provided, the system will automatically:
+- Mark the session as `completed` if the final score is >= 70
+- Mark the session as `uncompleted` if the final score is < 70
 
 **Response:**
 ```json
 {
     "success": true,
-    "session": {
-        "id": 1,
+    "message": "Game session ended successfully",
+    "data": {
         "session_id": "GAME_20250707_001",
-        "game_status": "completed",
-        "total_score": 850,
-        "total_rounds": 10,
-        "completed_rounds": 10,
-        "average_score": 85.0,
+        "final_score": 850,
         "duration": 300,
-        "ended_at": "2025-07-07T10:10:00Z"
+        "average_score": 85.0,
+        "game_status": "completed"
     }
 }
 ```
@@ -336,10 +335,8 @@ Authorization: Bearer {token}
            'Content-Type': 'application/json'
        },
        body: JSON.stringify({
-           session_id: session.session_id,
-           final_score: totalScore,
-           total_rounds: session.total_rounds,
-           game_status: 'completed'
+           game_session_id: session.id,
+           final_score: totalScore
        })
    });
    ```

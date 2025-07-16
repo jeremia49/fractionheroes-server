@@ -108,15 +108,20 @@ class GameController extends Controller
         $request->validate([
             'game_session_id' => 'required|exists:game_sessions,id',
             'final_score' => 'nullable|integer|min:0',
-            'game_status' => 'required|in:completed,uncompleted', // only allow these two
+            // 'game_status' => 'nullable|in:completed,uncompleted', // now optional
         ]);
 
         $session = GameSession::findOrFail($request->game_session_id);
         
+        // Determine the final score
+        $finalScore = $request->final_score ?? $session->total_score;
+        
+        $gameStatus = $finalScore >= 70 ? 'completed' : 'uncompleted';
+        
         $session->update([
             'ended_at' => now(),
-            'game_status' => $request->game_status,
-            'total_score' => $request->final_score ?? $session->total_score,
+            'game_status' => $gameStatus,
+            'total_score' => $finalScore,
         ]);
 
         return response()->json([
@@ -127,6 +132,7 @@ class GameController extends Controller
                 'final_score' => $session->total_score,
                 'duration' => $session->duration,
                 'average_score' => $session->average_score,
+                'game_status' => $session->game_status,
             ]
         ], 200);
     }
