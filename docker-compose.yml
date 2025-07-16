@@ -25,7 +25,7 @@ services:
       - type: volume
         source: vendor_data
         target: /var/www/html/vendor
-
+    restart: always
 
   mysql:
     image: mysql:8.0
@@ -38,7 +38,8 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - student-dashboard-network
-
+    restart: always
+    
   #   image: phpmyadmin/phpmyadmin:latest
   #   ports:
   #     - "8080:80"
