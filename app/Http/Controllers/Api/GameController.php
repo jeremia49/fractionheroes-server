@@ -168,7 +168,7 @@ class GameController extends Controller
                 'student' => $student,
                 'total_sessions' => $student->gameSessions->count(),
                 'total_faces' => $student->gameFaces->count(),
-                'average_score' => $student->gameSessions->where('game_status', 'completed')->avg('total_score') ?? 0,
+                'average_score' => $student->gameSessions->avg('total_score') ?? 0,
             ]
         ], 200);
     }
@@ -220,8 +220,8 @@ class GameController extends Controller
         $students = \App\Models\Student::with('gameSessions')
             ->get()
             ->map(function ($student) {
-                $totalScore = $student->gameSessions->where('game_status', 'completed')->sum('total_score');
-                $averageScore = $student->gameSessions->where('game_status', 'completed')->avg('total_score') ?: 0;
+                $totalScore = $student->gameSessions->sum('total_score');
+                $averageScore = $student->gameSessions->avg('total_score') ?: 0;
                 return [
                     'id' => $student->id,
                     'username' => $student->username,

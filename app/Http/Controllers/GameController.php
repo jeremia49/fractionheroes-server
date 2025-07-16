@@ -22,7 +22,7 @@ class GameController extends Controller
             'total_sessions' => GameSession::count(),
             'active_sessions' => GameSession::where('game_status', 'active')->count(),
             'total_faces' => GameFace::count(),
-            'average_score' => GameSession::where('game_status', 'completed')->avg('total_score') ?? 0,
+            'average_score' => GameSession::avg('total_score') ?? 0,
         ];
 
         // Get level statistics
@@ -81,7 +81,7 @@ class GameController extends Controller
             'total_sessions' => $student->gameSessions()->count(),
             'completed_sessions' => $student->gameSessions()->where('game_status', 'completed')->count(),
             'total_score' => $student->gameSessions()->sum('total_score'),
-            'average_score' => $student->gameSessions()->where('game_status', 'completed')->avg('total_score') ?? 0,
+            'average_score' => $student->gameSessions()->avg('total_score') ?? 0,
         ];
 
         // Get level statistics for this student
@@ -113,7 +113,7 @@ class GameController extends Controller
             $stats[$level] = [
                 'sessions_played' => $levelSessions->count(),
                 'highest_score' => $highestScore,
-                'average_score' => $completedSessions->avg('total_score') ?? 0,
+                'average_score' => $levelSessions->avg('total_score') ?? 0,
                 'completed_sessions' => $completedSessions->count(),
                 'unlocked' => $level == 1 || $highestScores[$level - 1] >= 70,
                 'duration' => $duration,
