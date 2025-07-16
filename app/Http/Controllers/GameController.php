@@ -41,13 +41,12 @@ class GameController extends Controller
 
         foreach ($levels as $level) {
             $levelSessions = GameSession::where('level', $level);
-            $completedSessions = $levelSessions->where('game_status', 'completed');
             
             $stats[$level] = [
                 'sessions_played' => $levelSessions->count(),
-                'highest_score' => $completedSessions->max('total_score') ?? 0,
-                'average_score' => $completedSessions->avg('total_score') ?? 0,
-                'completed_sessions' => $completedSessions->count(),
+                'highest_score' => $levelSessions->max('total_score') ?? 0,
+                'average_score' => $levelSessions->avg('total_score') ?? 0,
+                'completed_sessions' => $levelSessions->count(),
             ];
         }
 

@@ -126,7 +126,6 @@ class StudentController extends Controller
         }
         foreach ($levels as $level) {
             $levelSessions = \App\Models\GameSession::where('student_id', $studentId)->where('level', $level);
-            $completedSessions = $levelSessions->where('game_status', 'completed');
             // Find the session with the highest score
             $highestScore = $levelSessions->max('total_score') ?? 0;
             $sessionWithHighestScore = $levelSessions->where('total_score', $highestScore)->orderByDesc('ended_at')->first();
@@ -134,8 +133,8 @@ class StudentController extends Controller
             $stats[$level] = [
                 'sessions_played' => $levelSessions->count(),
                 'highest_score' => $highestScore,
-                'average_score' => $completedSessions->avg('total_score') ?? 0,
-                'completed_sessions' => $completedSessions->count(),
+                'average_score' => $levelSessions->avg('total_score') ?? 0,
+                'completed_sessions' => $levelSessions->count(),
                 'unlocked' => $level == 1 || $highestScores[$level - 1] >= 70,
                 'duration' => $duration,
             ];

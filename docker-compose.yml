@@ -9,9 +9,9 @@ services:
       - student-dashboard-network
     command: >
       sh -c "sleep 10 && php artisan storage:link --relative &&
+             php artisan migrate &&
              php artisan config:clear &&
              php artisan cache:clear &&
-             php artisan migrate &&
              php artisan serve --host=0.0.0.0 --port=8000"
     volumes:
       - type: bind
