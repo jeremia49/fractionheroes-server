@@ -61,7 +61,18 @@ class GameController extends Controller
         $gameSession = GameSession::with(['student', 'faces'])
             ->findOrFail($id);
 
-        return view('games.show', compact('gameSession'));
+        // Aggregate emotion data for the chart
+        $emotionData = $gameSession->faces()
+            ->whereNotNull('detected_emotion')
+            ->selectRaw('detected_emotion, COUNT(*) as count')
+            ->groupBy('detected_emotion')
+            ->orderBy('count', 'desc')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [ucfirst($item->detected_emotion) => $item->count];
+            });
+
+        return view('games.show', compact('gameSession', 'emotionData'));
     }
 
     /**
