@@ -95,21 +95,14 @@
                 <h6 class="m-0 font-weight-bold text-primary">Emotion Distribution</h6>
             </div>
             <div class="card-body">
-                @if($emotionData && $emotionData->count() > 0)
-                    <canvas id="emotionChart" width="400" height="200"></canvas>
-                    <div class="mt-2">
-                        <small class="text-muted">
-                            @foreach($emotionData as $emotion => $count)
-                                <span class="badge bg-light text-dark me-1">{{ $emotion }}: {{ $count }}</span>
-                            @endforeach
-                        </small>
-                    </div>
-                @else
-                    <div class="text-center py-3">
-                        <i class="fas fa-chart-bar fa-2x text-muted mb-2"></i>
-                        <p class="text-muted mb-0">No emotion data available</p>
-                    </div>
-                @endif
+                <canvas id="emotionChart" width="400" height="200"></canvas>
+                <div class="mt-2">
+                    <small class="text-muted">
+                        @foreach($emotionData as $emotion => $count)
+                            <span class="badge bg-light text-dark me-1">{{ $emotion }}: {{ $count }}</span>
+                        @endforeach
+                    </small>
+                </div>
             </div>
         </div>
     </div>
@@ -217,31 +210,34 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (emotionData && Object.keys(emotionData).length > 0) {
             const ctx = emotionChartCanvas.getContext('2d');
+            
+            // Define colors for all 9 emotions
+            const emotionColors = {
+                'Angry': { bg: 'rgba(220, 53, 69, 0.8)', border: 'rgba(220, 53, 69, 1)' },
+                'Disgust': { bg: 'rgba(40, 167, 69, 0.8)', border: 'rgba(40, 167, 69, 1)' },
+                'Fear': { bg: 'rgba(255, 193, 7, 0.8)', border: 'rgba(255, 193, 7, 1)' },
+                'Happy': { bg: 'rgba(255, 206, 86, 0.8)', border: 'rgba(255, 206, 86, 1)' },
+                'Sad': { bg: 'rgba(108, 117, 125, 0.8)', border: 'rgba(108, 117, 125, 1)' },
+                'Surprise': { bg: 'rgba(255, 159, 64, 0.8)', border: 'rgba(255, 159, 64, 1)' },
+                'Neutral': { bg: 'rgba(199, 199, 199, 0.8)', border: 'rgba(199, 199, 199, 1)' },
+                'Contempt': { bg: 'rgba(153, 102, 255, 0.8)', border: 'rgba(153, 102, 255, 1)' },
+                'No faces detected': { bg: 'rgba(23, 162, 184, 0.8)', border: 'rgba(23, 162, 184, 1)' }
+            };
+            
+            const labels = Object.keys(emotionData);
+            const data = Object.values(emotionData);
+            const backgroundColor = labels.map(label => emotionColors[label]?.bg || 'rgba(199, 199, 199, 0.8)');
+            const borderColor = labels.map(label => emotionColors[label]?.border || 'rgba(199, 199, 199, 1)');
+            
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: Object.keys(emotionData),
+                    labels: labels,
                     datasets: [{
                         label: 'Number of Detections',
-                        data: Object.values(emotionData),
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(54, 162, 235, 0.8)',
-                            'rgba(255, 206, 86, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)',
-                            'rgba(255, 159, 64, 0.8)',
-                            'rgba(199, 199, 199, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(199, 199, 199, 1)'
-                        ],
+                        data: data,
+                        backgroundColor: backgroundColor,
+                        borderColor: borderColor,
                         borderWidth: 1
                     }]
                 },

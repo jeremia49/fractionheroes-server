@@ -61,16 +61,35 @@ class GameController extends Controller
         $gameSession = GameSession::with(['student', 'faces'])
             ->findOrFail($id);
 
+        // Define all available emotions
+        $availableEmotions = [
+            'angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral', 'contempt', 'No faces detected'
+        ];
+
         // Aggregate emotion data for the chart
-        $emotionData = $gameSession->faces()
+        $detectedEmotions = $gameSession->faces()
             ->whereNotNull('detected_emotion')
             ->selectRaw('detected_emotion, COUNT(*) as count')
             ->groupBy('detected_emotion')
-            ->orderBy('count', 'desc')
             ->get()
             ->mapWithKeys(function ($item) {
-                return [ucfirst($item->detected_emotion) => $item->count];
+                return [strtolower($item->detected_emotion) => $item->count];
             });
+
+        // Initialize emotion data with all available emotions set to 0
+        $emotionData = collect($availableEmotions)->mapWithKeys(function ($emotion) {
+            return [ucfirst($emotion) => 0];
+        });
+
+        // Update with actual detected emotions
+        foreach ($detectedEmotions as $emotion => $count) {
+            $emotionData[ucfirst($emotion)] = $count;
+        }
+
+        // If no faces were detected at all, set "No faces detected" to 1
+        if ($gameSession->faces->count() === 0) {
+            $emotionData['No faces detected'] = 1;
+        }
 
         return view('games.show', compact('gameSession', 'emotionData'));
     }
