@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\GameController;
+use App\Http\Controllers\Api\EmotionController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +20,9 @@ use App\Http\Controllers\Api\GameController;
 */
 
 // Public API Routes
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')
+    ->as('api.v1.')
+    ->group(function () {
     // Authentication Routes
     // Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
@@ -39,6 +43,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/students/{studentId}/level-status', [GameController::class, 'getLevelStatus']);
     Route::get('/leaderboard', [GameController::class, 'leaderboard']);
     
+    Route::post('/emotion/upload', [EmotionController::class, 'detect']);
     
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
